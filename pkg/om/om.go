@@ -17,19 +17,19 @@ limitations under the License.
 package om
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/kubeservice-stack/kata-local-csi-driver/pkg/utils"
 	log "k8s.io/klog/v2"
 )
 
 const (
 	// SysLog log file
 	SysLog = "/var/log/messages"
+	// NsenterCmd is nsenter mount command
+	NsenterCmd = "/nsenter --mount=/proc/1/ns/mnt"
 	// IssueMessageFile tag
 	IssueMessageFile = "ISSUE_MESSAGE_FILE"
 	// IssueBlockReference tag
@@ -79,16 +79,12 @@ func CheckMessageFileIssue() {
 		// Fix Block Volume Reference Issue;
 		if GlobalConfigVar.IssueBlockReference && strings.Contains(line, "is still referenced from other Pods") {
 			if FixReferenceMountIssue(line) {
-				log.Info("fix reference mount issue done")
-			} else {
-				log.Warning("fix reference mount issue failed")
+
 			}
 			// Fix Orphaned Pod Issue
-		} else if GlobalConfigVar.IssueOrphanedPod && strings.Contains(line, "rphaned pod") && (strings.Contains(line, "found, but volume paths are still present on disk") || strings.Contains(line, "found, but volumes are not cleaned up") || strings.Contains(line, "terminated, but some volumes have not been cleaned up")) {
+		} else if GlobalConfigVar.IssueOrphanedPod && strings.Contains(line, "rphaned pod") && strings.Contains(line, "found, but volume paths are still present on disk") {
 			if FixOrphanedPodIssue(line) {
-				log.Info("fix orphaned pod done")
-			} else {
-				log.Warning("fix orphaned pod failed")
+
 			}
 		}
 	}
@@ -127,16 +123,4 @@ func GlobalConfigSet() {
 	if orphanedPod == "true" {
 		GlobalConfigVar.IssueOrphanedPod = true
 	}
-}
-
-// ReadFileLinesFromHost read file from /var/log/messages
-func ReadFileLinesFromHost(fname string) []string {
-	lineList := []string{}
-	out := ""
-	var err error
-	cmd := fmt.Sprintf("tail -n %d %s", GlobalConfigVar.MessageFileTailLines, fname)
-	if out, err = utils.Run(cmd); err != nil {
-		return lineList
-	}
-	return strings.Split(out, "\n")
 }

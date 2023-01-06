@@ -42,7 +42,7 @@ func FixReferenceMountIssue(line string) bool {
 
 	// loop files
 	for _, file := range linkFiles {
-		if utils.IsFileExisting(file) {
+		if IsFileExisting(file) {
 			if !isFileBlockLink(file) {
 				log.Infof("Reference File %s not expect", file)
 				continue

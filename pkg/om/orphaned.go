@@ -61,7 +61,7 @@ func FixOrphanedPodIssue(line string) bool {
 	}
 
 	// check kubernetes csi volumes
-	csiPodPath := filepath.Join("/var/lib/kubelet/pods", orphanUID, "volumes/kubernetes.io~csi")
+	csiPodPath := filepath.Join(utils.KubeletRootDir, "/pods", orphanUID, "volumes/kubernetes.io~csi")
 	volumes, err := ioutil.ReadDir(csiPodPath)
 	if err != nil {
 		log.Warningf("OrphanPod: List Volumes with error: %s, line: %s", err.Error(), line)
@@ -82,7 +82,7 @@ func FixOrphanedPodIssue(line string) bool {
 				log.Infof("OrphanPod: Successful Remove Path(%s).", volumeMountPath)
 			}
 		}
-		if utils.IsFileExisting(volumeJSONPath) {
+		if IsFileExisting(volumeJSONPath) {
 			err = os.Remove(volumeJSONPath)
 			if err != nil {
 				log.Errorf("OrphanPod: Remove Json File %s with error %s", volumeJSONPath, err.Error())

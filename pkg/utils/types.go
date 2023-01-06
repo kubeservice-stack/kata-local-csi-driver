@@ -38,6 +38,13 @@ const (
 
 	ProvisionerName string = "local.csi.kubeservice.cn"
 
+	// ServiceType tag
+	ServiceType = "SERVICE_TYPE"
+	// PluginService represents the csi-plugin type.
+	PluginService = "local"
+	// ProvisionerService represents the csi-provisioner type.
+	ProvisionerService = "provisioner"
+
 	EnvLogLevel = "LogLevel"
 	LogPanic    = "Panic"
 	LogFatal    = "Fatal"
