@@ -17,7 +17,7 @@ spec:
       containers:
       - name: kube-kata
         image: dongjiang1989/kata-deploy:stable
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
             exec:
