@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: csi-kata-lvm
+provisioner: lvmplugin.csi.kubeservice.cn
+parameters:
+    vgName: volumegroup1
+    fsType: ext4
+    pvType: localdisk
+    direct: "true"
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true

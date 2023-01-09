@@ -267,7 +267,7 @@ func (ns *nodeServer) NodeUnpublishVolume(ctx context.Context, req *csi.NodeUnpu
 	// Step 2: umount
 	if ns.isDirect {
 		if err := volume.Remove(targetPath); err != nil {
-			log.Errorf("NodeUnpublishVolume: direct volume remove failed: %s", err.Error())
+			log.Errorf("NodeUnpublishVolume: kata direct volume remove failed: %s", err.Error())
 		}
 	}
 	isMnt, err := ns.mounter.IsMounted(targetPath)

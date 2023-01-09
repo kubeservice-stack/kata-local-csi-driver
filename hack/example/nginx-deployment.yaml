@@ -1,0 +1,45 @@
+kind: RuntimeClass
+apiVersion: node.k8s.io/v1
+metadata:
+    name: kata-qemu
+handler: kata-qemu
+overhead:
+    podFixed:
+        memory: "160Mi"
+        cpu: "250m"
+scheduling:
+  nodeSelector:
+    katacontainers.io/kata-runtime: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-kata-lvm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: deployment-kata-lvm
+  template:
+    metadata:
+      name: deployment-kata-lvm
+      labels:
+        name: deployment-kata-lvm
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      runtimeClassName: kata-qemu
+      containers:
+        - name: deployment-kata-lvm
+          image: nginx:latest
+          command:
+            - "/bin/bash"
+            - "-c"
+            - set -euo pipefail; while true; do echo $(hostname) $(date) >> /mnt/data/outfile; sleep 1; done
+          volumeMounts:
+            - name: lvm
+              mountPath: "/mnt/data"
+      volumes:
+        - name: lvm
+          persistentVolumeClaim:
+            claimName: pvc-kata-dynamic
